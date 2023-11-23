@@ -22,7 +22,6 @@ export default function Home() {
         console.log("this is the text", text);
         const json = JSON.parse(text.substr(47).slice(0, -2));
         setData(json);
-        // console.log("this is the super data", data)
         console.log("json", json)
 
 
@@ -44,25 +43,27 @@ export default function Home() {
       <h1 className='flex text-violet-500 text-5xl'>Tasas de {sheetName}</h1>
 
       {data && (
-        <table>
-          <tbody>
-            <tr>
-              {data.table.cols.map((col, index) => (
-                <th key={index} className="p-2 bg-slate-800 border border-sky-500 first:w-96">{col.label}</th>
-              ))}
-            </tr>
-            {data.table.rows.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.c.map((cell, cellIndex) => (
-                  <td key={cellIndex} className="p-2">{
-                    cell && cell.v !== null ?
-                      (cellIndex >= row.c.length - 2 ? cell.v + '%' : cell.v) : null
-                  }</td>
+        <div className="border-[2px] border-sky-500 rounded-[1rem] overflow-hidden">
+          <table>
+            <tbody>
+              <tr>
+                {data.table.cols.map((col, index) => (
+                  <th key={index} className="p-2 bg-slate-800 border border-sky-500 first:w-96">{col.label}</th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+              {data.table.rows.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {row.c.map((cell, cellIndex) => (
+                    <td key={cellIndex} className="p-2 border border-sky-500">{
+                      cell && cell.v !== null ?
+                        (cellIndex >= row.c.length - 2 ? cell.v + '%' : cell.v) : null
+                    }</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
 
