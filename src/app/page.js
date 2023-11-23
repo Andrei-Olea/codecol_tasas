@@ -10,30 +10,63 @@ export default function Home() {
   const query = encodeURIComponent('Select *')
   const url = `${base}&sheet=${sheetName}&tq=${query}`
 
+
   useEffect(() => {
     const fetchData = async () => {
-      fetch(url)
-        .then(res => res.text())
-        .then(text => {
-          const json = JSON.parse(text.substr(47).slice(0, -2))
-          setData(json)
-        })
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("HTTP error " + response.status);
+        }
+        const text = await response.text();
+        console.log("this is the text", text);
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        setData(json);
+        // console.log("this is the super data", data)
+        console.log("json", json)
 
-        console.log(data)
+
+
+      } catch (error) {
+        console.log("Fetch error:", error)
+      }
+
     };
     fetchData();
   }, [url]);
 
+  useEffect(() => {
+    console.log("this is the data", data)
+  }, [data])
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-       <h1 className='flex text-violet-500 text-5xl'>Tasas de Ahorro</h1>
+      <h1 className='flex text-violet-500 text-5xl'>Tasas de {sheetName}</h1>
 
-    <p>{data.table.cols[0].label}</p>
+      {data && (
+        <table>
+          <tbody>
+            <tr>
+              {data.table.cols.map((col, index) => (
+                <th key={index} className="p-2 bg-slate-800 border border-sky-500 first:w-96">{col.label}</th>
+              ))}
+            </tr>
+            {data.table.rows.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {row.c.map((cell, cellIndex) => (
+                  <td key={cellIndex} className="p-2">{
+                    cell && cell.v !== null ?
+                      (cellIndex >= row.c.length - 2 ? cell.v + '%' : cell.v) : null
+                  }</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
-     <table>
-      
-     </table>
+
     </main>
-  )
+  );
+
 }
